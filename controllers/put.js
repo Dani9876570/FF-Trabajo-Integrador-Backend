@@ -1,6 +1,6 @@
 // 1. IMPORTACIÓN DEL MODELO
 // Requerimos el modelo Product para realizar operaciones de actualización en la base de datos de Atlas.
-const Product = require('../../models/Product');
+const Product = require('../models/product');
 
 /**
  * CONTROLADOR PARA ACTUALIZAR UN PRODUCTO

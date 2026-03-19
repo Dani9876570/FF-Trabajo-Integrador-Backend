@@ -1,6 +1,6 @@
 // 1. IMPORTACIÓN DEL MODELO
 // Traemos el modelo Product para poder comunicarnos con la colección en MongoDB.
-const Product = require('../../models/Product');
+const Product = require('../models/product');
 
 /**
  * CONTROLADOR PARA CREAR UN PRODUCTO INDIVIDUAL

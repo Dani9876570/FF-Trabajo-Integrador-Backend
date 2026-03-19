@@ -1,5 +1,5 @@
 // 1. Importamos el modelo de Producto para interactuar con la base de datos de MongoDB
-const Product = require('../../models/Product');
+const Product = require('../models/product');
 
 /**
  * CONTROLADOR PARA BUSCAR UN PRODUCTO POR CÓDIGO

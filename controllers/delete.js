@@ -1,5 +1,5 @@
 // 1. Importamos el modelo de Producto para interactuar con la colección de la base de datos
-const Product = require('../../models/Product');
+const Product = require('../models/product');
 
 /**
  * CONTROLADOR PARA ELIMINAR UN PRODUCTO

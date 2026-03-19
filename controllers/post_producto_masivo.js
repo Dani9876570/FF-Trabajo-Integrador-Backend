@@ -1,6 +1,6 @@
 // 1. IMPORTACIÓN DEL MODELO
 // Traemos el modelo de Producto para comunicarnos con la colección en MongoDB Atlas.
-const Product = require('../../models/Product'); 
+const Product = require('../models/product');
 
 // 2. IMPORTACIÓN DE LOS DATOS
 // Traemos el archivo JSON corregido con el array de 30 productos electrónicos.

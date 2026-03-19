@@ -1,5 +1,5 @@
 // 1. Importamos el modelo de Producto para realizar búsquedas en la colección de electrónicos
-const Product = require('../../models/Product');
+const Product = require('../models/product');
 
 /**
  * CONTROLADOR PARA BÚSQUEDA POR TÉRMINOS (SEARCH)
