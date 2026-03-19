@@ -1,5 +1,5 @@
 // 1. IMPORTACIÓN DEL MODELO
-// Requerimos el modelo Product para poder consultar la colección en la base de datos.
+// Requerimos el modelo Product para poder consultar la colección en la base de datos de Atlas.
 const Product = require('../../models/Product');
 
 /**
@@ -9,26 +9,24 @@ const Product = require('../../models/Product');
 const getAllProducts = async (req, res) => {
     try {
         /**
-         * 2. CONSULTA GENERAL
-         * .find() es el método de Mongoose para buscar documentos.
-         * Al no pasarle ningún objeto de filtro (está vacío), Mongoose 
-         * interpreta que debe traer TODOS los productos existentes.
-         * Usamos 'await' porque es una operación que toma tiempo en la base de datos.
+         * 2. CONSULTA GENERAL CON ORDENAMIENTO
+         * .find(): Busca todos los documentos al no tener filtros.
+         * .sort({ codigo: 1 }): Ordena los resultados por el campo 'codigo' de forma ascendente (1).
+         * Esto hace que tu lista de 30 productos se vea organizada del 1 al 30.
          */
-        const products = await Product.find();
+        const products = await Product.find().sort({ codigo: 1 });
 
         /**
          * 3. RESPUESTA EXITOSA
-         * Enviamos un status 200 (OK), que indica que la petición fue procesada correctamente.
-         * Devolvemos el array de objetos 'products' en formato JSON.
+         * Si la base de datos está vacía, 'products' será un array vacío [].
+         * Enviamos status 200 (OK) y el array de objetos en formato JSON.
          */
         res.status(200).json(products);
 
     } catch (error) {
         /**
          * 4. GESTIÓN DE ERRORES DE SERVIDOR
-         * Si falla la conexión con MongoDB o hay un error interno, devolvemos status 500.
-         * Incluimos el mensaje de error para facilitar el debug durante el desarrollo.
+         * Si falla la conexión o hay un error interno (ej: error de sintaxis), devolvemos 500.
          */
         res.status(500).json({ 
             message: "Error al obtener la lista de productos", 
@@ -37,5 +35,5 @@ const getAllProducts = async (req, res) => {
     }
 };
 
-// Exportamos la función para que el router la asocie al método GET (/)
+// 5. Exportamos la función para que el router la asocie al método GET (/)
 module.exports = getAllProducts;

@@ -1,4 +1,4 @@
-// Importamos el modelo de Producto para interactuar con la colección de la base de datos
+// 1. Importamos el modelo de Producto para interactuar con la colección de la base de datos
 const Product = require('../../models/Product');
 
 /**
@@ -7,20 +7,28 @@ const Product = require('../../models/Product');
  */
 const deleteProduct = async (req, res) => {
     try {
-        // 1. Extraemos el 'codigo' de los parámetros de la URL (req.params)
+        // 2. Extraemos el 'codigo' de los parámetros de la URL (req.params)
         const { codigo } = req.params;
 
+        // 3. VALIDACIÓN PREVIA (Seguridad)
+        // Verificamos que el código recibido sea un número válido antes de consultar la DB.
+        if (isNaN(codigo)) {
+            return res.status(400).json({ 
+                message: "El código proporcionado debe ser un número válido." 
+            });
+        }
+
         /**
-         * 2. BUSCAR Y ELIMINAR
+         * 4. BUSCAR Y ELIMINAR
          * findOneAndDelete: Busca un documento que coincida con el filtro y lo borra.
-         * Usamos Number(codigo) para asegurarnos de que la búsqueda sea con un valor numérico.
+         * Usamos Number(codigo) para asegurar que coincida con el tipo de dato del Schema.
          */
         const deletedProduct = await Product.findOneAndDelete({ codigo: Number(codigo) });
         
         /**
-         * 3. VALIDACIÓN DE EXISTENCIA
+         * 5. VALIDACIÓN DE EXISTENCIA
          * Si findOneAndDelete no encuentra nada, devuelve 'null'. 
-         * En ese caso, respondemos con un error 404 (No encontrado).
+         * Respondemos con un error 404 para indicar que el recurso no existe.
          */
         if (!deletedProduct) {
             return res.status(404).json({ 
@@ -29,9 +37,9 @@ const deleteProduct = async (req, res) => {
         }
         
         /**
-         * 4. RESPUESTA DE ÉXITO
+         * 6. RESPUESTA DE ÉXITO
          * Si se eliminó correctamente, enviamos un mensaje de confirmación 
-         * y devolvemos los datos del producto que acabamos de borrar.
+         * y devolvemos los datos del producto que se borró (útil para auditoría).
          */
         res.status(200).json({ 
             message: "Producto eliminado correctamente", 
@@ -40,9 +48,8 @@ const deleteProduct = async (req, res) => {
 
     } catch (error) {
         /**
-         * 5. MANEJO DE ERRORES
-         * Si ocurre un fallo en el servidor o en la base de datos, 
-         * enviamos un código 500 con el mensaje del error.
+         * 7. MANEJO DE ERRORES (Fallo del servidor)
+         * Capturamos errores de conexión o de sintaxis de la base de datos.
          */
         res.status(500).json({ 
             message: "Hubo un error al procesar la eliminación",
@@ -51,5 +58,5 @@ const deleteProduct = async (req, res) => {
     }
 };
 
-// Exportamos la función para que pueda ser utilizada en el archivo de rutas
+// 8. Exportamos la función para que el archivo de rutas (routes) pueda invocarla.
 module.exports = deleteProduct;

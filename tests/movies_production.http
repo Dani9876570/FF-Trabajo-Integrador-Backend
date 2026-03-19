@@ -1,0 +1,55 @@
+### VARIABLES DE ENTORNO (Producción - Red Real en Railway)
+# Esta es la URL pública que te generó Railway para tu proyecto.
+@host = https://ff-trabajo-integrador-backend-production.up.railway.app/api
+
+############################################################
+# TEST DE DESPLIEGUE (SMOKE TEST)
+############################################################
+
+### 1. VERIFICAR SI EL SERVIDOR RESPONDE
+# Si esto devuelve un mensaje de bienvenida, significa que el index.js arrancó bien.
+GET {{host}}/
+Content-Type: application/json
+
+############################################################
+# SECCIÓN DE PRODUCTOS EN PRODUCCIÓN (MONGODB ATLAS)
+############################################################
+
+### 2. CARGA MASIVA EN LA NUBE
+# ¡IMPORTANTE! Ejecutar esto una sola vez para poblar tu base de datos en Atlas.
+# Debería devolver un count de 30 productos.
+POST {{host}}/productos/masivo
+Content-Type: application/json
+
+### 3. OBTENER EL CATÁLOGO COMPLETO
+# Verifica que los datos se guardaron correctamente en el cluster de MongoDB.
+GET {{host}}/productos
+Content-Type: application/json
+
+### 4. BUSCAR UN PRODUCTO ESPECÍFICO (ID DE NEGOCIO)
+# Reemplaza '4815' con un código que sepas que está en tu JSON.
+GET {{host}}/productos/4815
+Content-Type: application/json
+
+### 5. FILTRAR POR CATEGORÍA
+# Prueba el filtrado dentro del array 'categoria' en el entorno real.
+GET {{host}}/productos/categoria/Computación
+Content-Type: application/json
+
+### 6. BUSCADOR INTELIGENTE (QUERY STRING)
+# Test de búsqueda parcial usando el parámetro ?q=
+GET {{host}}/productos/buscar?q=Smartphone
+Content-Type: application/json
+
+### 7. FILTRAR POR RANGO DE PRECIO
+# Verifica la lógica de precios entre 500 y 1500 dólares/pesos.
+GET {{host}}/productos/precio/500-1500
+Content-Type: application/json
+
+############################################################
+# ACCESO A DOCUMENTACIÓN
+############################################################
+
+### 8. LINK DE SWAGGER (DOCUMENTACIÓN INTERACTIVA)
+# Podés copiar este link y pegarlo directamente en tu navegador:
+# https://ff-trabajo-integrador-backend-production.up.railway.app/api-docs

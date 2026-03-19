@@ -1,5 +1,15 @@
+# 1. DEPENDENCIAS
+# No subimos la carpeta node_modules porque es muy pesada. 
+# Railway la descargará automáticamente al leer tu package.json.
 /node_modules
+
+# 2. LOCKFILES
+# Si usas pnpm, este archivo asegura que todos tengan las mismas versiones.
+# Nota: Algunos desarrolladores lo suben, pero si prefieres limpieza total, está bien aquí.
 /pnpm-lock.yaml
+
+# 3. VARIABLES DE ENTORNO (SEGURIDAD CRÍTICA)
+# Evitamos subir nuestras contraseñas y configuraciones privadas a la nube (GitHub).
 .env
 .env.development
 .env.local_railway

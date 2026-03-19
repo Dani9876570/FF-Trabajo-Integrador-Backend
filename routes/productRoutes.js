@@ -1,9 +1,12 @@
+// 1. IMPORTACIÓN DE DEPENDENCIAS
 const express = require('express');
 const router = express.Router();
 
 /**
- * IMPORTACIÓN DE LOS CONTROLADORES
- * Traemos cada función desde su archivo individual en la carpeta controllers.
+ * 2. IMPORTACIÓN DE CONTROLADORES
+ * Traemos cada función lógica desde su archivo correspondiente.
+ * Nota: Asegurate de que los nombres de los archivos en la carpeta 'controllers' 
+ * coincidan exactamente con estos (mayúsculas/minúsculas).
  */
 const getAll = require('../controllers/productController');
 const getByCode = require('../controllers/get_Code');
@@ -16,44 +19,45 @@ const putProduct = require('../controllers/put');
 const deleteProduct = require('../controllers/delete');
 
 /**
- * DEFINICIÓN DE RUTAS (ENDPOINTS)
+ * 3. DEFINICIÓN DE ENDPOINTS (Puntos clave de la consigna)
  */
 
-// 1. Obtener todos los productos
+// A. RUTA GENERAL: Obtener el listado completo de artículos
 // GET /api/productos/
 router.get('/', getAll);
 
-// 2. Carga masiva desde el JSON (Punto 4 de la consigna)
+// B. CARGA MASIVA: Endpoint para popular la DB con los 30 productos del JSON
 // POST /api/productos/masivo
 router.post('/masivo', postMasivo);
 
-// 3. Búsqueda por término (Buscador inteligente)
-// GET /api/productos/buscar?q=termino
+// C. BÚSQUEDA: Buscador por término (usando req.query.q)
+// GET /api/productos/buscar
 router.get('/buscar', getByTerm);
 
-// 4. Filtrar por rango de precio
+// D. FILTRO POR PRECIO: Rango de valores (min y max)
 // GET /api/productos/precio/100-500
 router.get('/precio/:min-:max', getByPrice);
 
-// 5. Filtrar por nombre de categoría
+// E. FILTRO POR CATEGORÍA: Búsqueda dentro del array de categorías
 // GET /api/productos/categoria/Celulares
 router.get('/categoria/:nombre', getByCategory);
 
-// 6. Obtener un producto por su código
+// F. BUSQUEDA POR CÓDIGO: Obtener un producto específico
 // GET /api/productos/101
 router.get('/:codigo', getByCode);
 
-// 7. Crear un nuevo producto manualmente
+// G. CREACIÓN: Agregar un nuevo producto manualmente (req.body)
 // POST /api/productos/
 router.post('/', postProduct);
 
-// 8. Actualizar un producto existente por su código
+// H. ACTUALIZACIÓN: Modificar un producto existente por su código
 // PUT /api/productos/101
 router.put('/:codigo', putProduct);
 
-// 9. Eliminar un producto por su código
+// I. ELIMINACIÓN: Borrar un producto de la base de datos
 // DELETE /api/productos/101
 router.delete('/:codigo', deleteProduct);
 
-// Exportamos el enrutador para que sea usado en el index.js de routes
+// 4. EXPORTACIÓN
+// El enrutador se exporta para ser integrado en el index.js de la carpeta routes.
 module.exports = router;

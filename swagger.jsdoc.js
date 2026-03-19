@@ -2,6 +2,7 @@
  * @swagger
  * components:
  * schemas:
+ * # Esquema principal: Define cómo se ve un producto al salir de la base de datos
  * Product:
  * type: object
  * required:
@@ -12,35 +13,36 @@
  * properties:
  * _id:
  * type: string
- * description: ID único generado por MongoDB
+ * description: ID único generado automáticamente por MongoDB
  * example: 60d21b4667d0d8992e610c85
  * codigo:
  * type: number
- * description: Código numérico único del producto
+ * description: Código numérico único para identificación de negocio
  * example: 101
  * nombre:
  * type: string
- * description: Nombre del producto electrónico
+ * description: Nombre comercial del producto
  * example: Smartphone Samsung Galaxy S23
  * precio:
  * type: number
- * description: Precio del producto
+ * description: Valor monetario del producto
  * example: 850.50
  * categoria:
  * type: array
- * description: Categorías a las que pertenece el producto
+ * description: Lista de etiquetas o categorías asociadas
  * items:
  * type: string
  * example: ["Celulares", "Tecnología"]
  * imagen:
  * type: string
- * description: URL de la imagen del producto
+ * description: URL externa de la fotografía del producto
  * example: https://ejemplo.com/foto.jpg
  * descripcion:
  * type: string
- * description: Detalle del producto
+ * description: Especificaciones técnicas o detalle comercial
  * example: 128GB de almacenamiento, 8GB RAM.
  *
+ * # Esquema de Entrada: Se usa para crear o actualizar (no incluye el _id)
  * ProductInput:
  * type: object
  * required:
@@ -68,6 +70,7 @@
  * descripcion:
  * type: string
  *
+ * # Esquema de Error: Estructura estándar para respuestas fallidas
  * Error:
  * type: object
  * properties:
@@ -79,11 +82,12 @@
 /**
  * @swagger
  * /api/productos:
+ * # Listado general
  * get:
  * tags:
  * - Productos
  * summary: Obtener todo el catálogo
- * description: Retorna la lista completa de productos electrónicos.
+ * description: Retorna la lista completa de productos electrónicos almacenados.
  * responses:
  * 200:
  * description: Lista obtenida exitosamente
@@ -93,6 +97,8 @@
  * type: array
  * items:
  * $ref: '#/components/schemas/Product'
+ *
+ * # Creación manual
  * post:
  * tags:
  * - Productos
@@ -108,16 +114,18 @@
  * description: Producto creado con éxito
  *
  * /api/productos/masivo:
+ * # Utilidad de sistema
  * post:
  * tags:
  * - Sistema
  * summary: Carga masiva desde JSON
- * description: Inserta todos los productos del archivo electronicos.json en la base de datos.
+ * description: Lee el archivo interno 'electronicos.json' e impacta los 30 productos en la DB.
  * responses:
  * 201:
  * description: Carga masiva exitosa
  *
  * /api/productos/{codigo}:
+ * # Búsqueda por parámetro de ruta (Path Parameter)
  * get:
  * tags:
  * - Productos
@@ -132,7 +140,9 @@
  * 200:
  * description: Producto encontrado
  * 404:
- * description: No se encontró el código
+ * description: No se encontró el código solicitado
+ *
+ * # Actualización total o parcial
  * put:
  * tags:
  * - Productos
@@ -150,7 +160,9 @@
  * $ref: '#/components/schemas/ProductInput'
  * responses:
  * 200:
- * description: Actualizado correctamente
+ * description: Datos actualizados correctamente
+ *
+ * # Eliminación física
  * delete:
  * tags:
  * - Productos
@@ -163,14 +175,15 @@
  * type: number
  * responses:
  * 200:
- * description: Eliminado con éxito
+ * description: Registro eliminado con éxito
  *
  * /api/productos/buscar:
+ * # Búsqueda por Query Parameter (?q=...)
  * get:
  * tags:
  * - Productos
  * summary: Buscador inteligente
- * description: Busca productos que contengan el término en su nombre.
+ * description: Realiza una búsqueda por coincidencia de texto en el nombre del producto.
  * parameters:
  * - name: q
  * in: query
@@ -180,9 +193,10 @@
  * type: string
  * responses:
  * 200:
- * description: Resultados encontrados
+ * description: Resultados de búsqueda entregados
  *
  * /api/productos/categoria/{nombre}:
+ * # Filtro por categoría en la ruta
  * get:
  * tags:
  * - Productos
@@ -195,5 +209,5 @@
  * type: string
  * responses:
  * 200:
- * description: Productos de la categoría
+ * description: Listado de productos pertenecientes a la categoría
  */

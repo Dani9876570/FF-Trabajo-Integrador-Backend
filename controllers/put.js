@@ -1,5 +1,5 @@
 // 1. IMPORTACIÓN DEL MODELO
-// Requerimos el modelo Product para realizar operaciones de actualización en la base de datos.
+// Requerimos el modelo Product para realizar operaciones de actualización en la base de datos de Atlas.
 const Product = require('../../models/Product');
 
 /**
@@ -11,27 +11,41 @@ const updateProduct = async (req, res) => {
         /**
          * 2. OBTENCIÓN DEL IDENTIFICADOR
          * El 'codigo' viene de los parámetros de la URL (req.params).
-         * Es el criterio que usaremos para encontrar el producto a editar.
          */
         const { codigo } = req.params;
 
+        // 3. VALIDACIÓN DE ENTRADA (Seguridad)
+        // Verificamos que el código sea un número y que el body no esté vacío.
+        if (isNaN(codigo)) {
+            return res.status(400).json({ 
+                message: "El código proporcionado debe ser un número válido." 
+            });
+        }
+
+        if (!req.body || Object.keys(req.body).length === 0) {
+            return res.status(400).json({ 
+                message: "No se enviaron datos para actualizar." 
+            });
+        }
+
         /**
-         * 3. ACTUALIZACIÓN EN MONGODB
-         * findOneAndUpdate recibe tres argumentos principales:
-         * - Filtro: { codigo: Number(codigo) } para encontrar el producto correcto.
-         * - Datos: req.body contiene los nuevos campos a actualizar.
-         * - Opciones: { new: true } le indica a Mongoose que devuelva el objeto 
-         * YA MODIFICADO. Si no lo pones, te devuelve el objeto viejo.
+         * 4. ACTUALIZACIÓN EN MONGODB
+         * findOneAndUpdate recibe:
+         * - Filtro: Para encontrar el producto.
+         * - Datos: Los nuevos campos a actualizar ($set).
+         * - Opciones: 
+         * new: true -> Devuelve el producto ya cambiado.
+         * runValidators: true -> Valida los datos nuevos contra el Schema.
          */
         const updatedProduct = await Product.findOneAndUpdate(
             { codigo: Number(codigo) }, 
             req.body, 
-            { new: true, runValidators: true } // runValidators asegura que lo nuevo cumpla el esquema
+            { new: true, runValidators: true } 
         );
         
         /**
-         * 4. VALIDACIÓN DE EXISTENCIA
-         * Si no se encuentra un producto con ese código, informamos al cliente con un 404.
+         * 5. VALIDACIÓN DE EXISTENCIA
+         * Si el código no existe en la DB, 'updatedProduct' será null.
          */
         if (!updatedProduct) {
             return res.status(404).json({ 
@@ -40,15 +54,18 @@ const updateProduct = async (req, res) => {
         }
 
         /**
-         * 5. RESPUESTA EXITOSA
-         * Enviamos el producto actualizado con un status 200.
+         * 6. RESPUESTA EXITOSA
+         * Enviamos el producto actualizado con un status 200 (OK).
          */
-        res.status(200).json(updatedProduct);
+        res.status(200).json({
+            message: "Producto actualizado correctamente",
+            producto: updatedProduct
+        });
 
     } catch (error) {
         /**
-         * 6. MANEJO DE ERRORES
-         * Capturamos fallos de validación o de conexión y enviamos status 500.
+         * 7. MANEJO DE ERRORES
+         * Capturamos fallos de validación (ej: precio inválido) o de conexión.
          */
         res.status(500).json({ 
             message: "Error al intentar actualizar el producto",
@@ -57,5 +74,5 @@ const updateProduct = async (req, res) => {
     }
 };
 
-// Exportamos la función para que el enrutador la use con el método PUT o PATCH
+// 8. Exportamos la función para que el enrutador la use con el método PUT
 module.exports = updateProduct;

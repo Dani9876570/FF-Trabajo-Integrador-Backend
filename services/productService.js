@@ -1,81 +1,80 @@
 // 1. IMPORTACIONES
-// Traemos el modelo de Producto para interactuar con MongoDB
+// Traemos el modelo de Producto para interactuar con MongoDB Atlas
 const Product = require('../models/Product');
-// Traemos el JSON de electrónicos para la carga masiva
+// Traemos el JSON de electrónicos para la carga masiva de los 30 productos
 const productsData = require('../data/electronicos.json');
 
 /**
  * SERVICIO DE PRODUCTOS (productService)
- * Este objeto contiene todas las funciones que manipulan los datos.
- * Los controladores llamarán a estos métodos.
+ * Este objeto contiene toda la lógica de acceso a datos (Data Access Layer).
+ * Centraliza las consultas a Mongoose para que los controladores sean más simples.
  */
 const productService = {
 
     /**
      * Obtener todos los productos de la base de datos.
+     * Los devuelve ordenados por código de forma ascendente.
      */
     getAll: async () => {
-        // .find() sin parámetros devuelve todo el catálogo
-        return await Product.find();
+        return await Product.find().sort({ codigo: 1 });
     },
 
     /**
-     * Buscar un producto por su código de negocio (campo 'codigo').
+     * Buscar un producto por su código de negocio único.
      */
     getByCode: async (codigo) => {
-        // Buscamos un único documento que coincida con el código numérico
         return await Product.findOne({ codigo: Number(codigo) });
     },
 
     /**
      * Buscar productos por una categoría específica.
+     * Aprovecha que Mongoose busca dentro de arrays automáticamente.
      */
     getByCategory: async (nombreCategoria) => {
-        // Mongoose filtra dentro del array 'categoria' automáticamente
-        return await Product.find({ categoria: nombreCategoria });
+        return await Product.find({ 
+            categoria: { $regex: new RegExp(nombreCategoria, 'i') } 
+        });
     },
 
     /**
-     * Buscar productos dentro de un rango de precio.
+     * Buscar productos dentro de un rango de precio definido por el usuario.
      */
     getByPriceRange: async (min, max) => {
-        // $gte: mayor o igual | $lte: menor o igual
         return await Product.find({
             precio: { $gte: Number(min), $lte: Number(max) }
         });
     },
 
     /**
-     * Buscar productos por coincidencia de texto en el nombre.
+     * Buscar productos por coincidencia de texto en el nombre (Buscador).
      */
     getByTerm: async (termino) => {
-        // Usamos una Expresión Regular para búsqueda parcial e insensible a mayúsculas
         return await Product.find({
             nombre: { $regex: termino, $options: 'i' }
         });
     },
 
     /**
-     * Crear un nuevo producto manualmente.
+     * Crear un nuevo producto individual validando los datos contra el Schema.
      */
     create: async (dataProducto) => {
-        // Guardamos el nuevo producto según los datos del body
         return await Product.create(dataProducto);
     },
 
     /**
-     * Realizar la carga masiva desde el archivo JSON.
+     * Realizar la carga masiva desde el archivo JSON de electrónicos.
+     * Primero limpia la colección para evitar errores de duplicados.
      */
     bulkCreate: async () => {
-        // Opcional: Podrías limpiar la base antes con await Product.deleteMany({});
+        await Product.deleteMany({}); // Limpieza preventiva
         return await Product.insertMany(productsData);
     },
 
     /**
-     * Actualizar los datos de un producto por su código.
+     * Actualizar los datos de un producto buscando por su código único.
+     * runValidators: true asegura que los cambios respeten las reglas del modelo.
      */
     update: async (codigo, nuevosDatos) => {
-        // { new: true } devuelve el objeto ya modificado
         return await Product.findOneAndUpdate(
             { codigo: Number(codigo) },
             nuevosDatos,
@@ -84,13 +83,12 @@ const productService = {
     },
 
     /**
-     * Eliminar un producto de la base de datos por su código.
+     * Eliminar un producto de la base de datos definitivamente.
      */
     delete: async (codigo) => {
-        // Busca y remueve el documento que coincida con el código
         return await Product.findOneAndDelete({ codigo: Number(codigo) });
     }
 };
 
-// Exportamos el servicio para que sea usado por los controladores
+// Exportamos el servicio para que sea consumido por los controladores (Controllers)
 module.exports = productService;

@@ -1,4 +1,4 @@
-// Importamos el modelo de Producto para realizar búsquedas en la colección
+// 1. Importamos el modelo de Producto para realizar búsquedas en la colección de electrónicos
 const Product = require('../../models/Product');
 
 /**
@@ -8,18 +8,26 @@ const Product = require('../../models/Product');
 const getByTerm = async (req, res) => {
     try {
         /**
-         * 1. OBTENCIÓN DEL QUERY PARAMETER
-         * A diferencia de los anteriores, este usa 'req.query'.
-         * Se usa en la URL después del signo '?'. 
-         * Ejemplo: /productos/buscar?q=smart
+         * 2. OBTENCIÓN DEL QUERY PARAMETER
+         * Usamos 'req.query' para capturar lo que viene después del signo '?'. 
+         * Ejemplo en URL: /api/productos/buscar?q=smart
          */
         const { q } = req.query; 
 
+        // 3. VALIDACIÓN DE ENTRADA
+        // Si el usuario no envió el parámetro 'q' o está vacío, 
+        // devolvemos un error 400 (Bad Request).
+        if (!q || q.trim() === "") {
+            return res.status(400).json({ 
+                message: "Debes proporcionar un término de búsqueda en el parámetro 'q'." 
+            });
+        }
+
         /**
-         * 2. BÚSQUEDA CON EXPRESIÓN REGULAR (Regex)
-         * .find() busca coincidencias en el campo 'nombre'.
-         * $regex: Es el patrón de búsqueda (el texto 'q' que envió el usuario).
-         * $options: 'i' (insensibilidad) hace que no importe si es MAYÚSCULA o minúscula.
+         * 4. BÚSQUEDA CON EXPRESIÓN REGULAR (Regex)
+         * .find() busca coincidencias parciales en el campo 'nombre'.
+         * $regex: Es el texto que buscamos (el valor de 'q').
+         * $options: 'i' (insensibilidad) ignora mayúsculas y minúsculas.
          */
         const products = await Product.find({
             nombre: { 
@@ -29,15 +37,25 @@ const getByTerm = async (req, res) => {
         });
 
         /**
-         * 3. RESPUESTA EXITOSA
-         * Enviamos los productos que coinciden con la búsqueda.
+         * 5. VALIDACIÓN DE RESULTADOS
+         * Si la búsqueda no arroja ningún producto, avisamos al usuario.
+         */
+        if (products.length === 0) {
+            return res.status(404).json({
+                message: `No se encontraron productos que coincidan con: "${q}"`
+            });
+        }
+
+        /**
+         * 6. RESPUESTA EXITOSA
+         * Enviamos el array de productos que coinciden con la búsqueda con status 200.
          */
         res.status(200).json(products);
 
     } catch (error) {
         /**
-         * 4. GESTIÓN DE ERRORES
-         * Si algo falla en la consulta, devolvemos el error 500.
+         * 7. GESTIÓN DE ERRORES TÉCNICOS
+         * Capturamos fallos de conexión o errores en la consulta a MongoDB.
          */
         res.status(500).json({ 
             message: "Error al realizar la búsqueda por término",
@@ -46,5 +64,5 @@ const getByTerm = async (req, res) => {
     }
 };
 
-// Exportamos el controlador para usarlo en las rutas
+// 8. Exportamos el controlador para vincularlo a la ruta en productRoutes.js
 module.exports = getByTerm;
