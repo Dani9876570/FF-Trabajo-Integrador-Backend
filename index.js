@@ -1,13 +1,16 @@
-// 1. IMPORTACIONES DE MÓDULOS ESENCIALES
+// 1. IMPORTACIONES
 const express = require('express'); 
 const dotenv = require('dotenv'); 
 const cors = require('cors');
 
-// 2. CONFIGURACIÓN DE VARIABLES DE ENTORNO (¡MOVER AQUÍ ARRIBA!)
-// Primero configuramos dotenv para que todo lo que venga después ya tenga las variables
-dotenv.config({ path: process.env.NODE_ENV === 'development' ? '.env.development' : '.env' });
+// 2. CONFIGURACIÓN DE VARIABLES (Esto debe ir ANTES de connectDB)
+if (process.env.NODE_ENV === 'development') {
+    dotenv.config({ path: '.env.development' });
+} else {
+    dotenv.config(); // Para Railway
+}
 
-// 3. AHORA SÍ, IMPORTAMOS LOS ARCHIVOS QUE USAN ESAS VARIABLES
+// 3. AHORA SÍ, IMPORTAMOS TU CONEXIÓN
 const connectDB = require('./config/database');
 const swaggerUi = require('swagger-ui-express'); 
 const swaggerDocument = require('./swagger.config'); 
