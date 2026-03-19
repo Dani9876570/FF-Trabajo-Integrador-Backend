@@ -5,7 +5,12 @@ const dotenv = require("dotenv");
 
 // 3. Cargamos la configuración de variables de entorno.
 // En local buscará el archivo .env, pero en Railway leerá directamente del sistema.
-dotenv.config();
+// Detectamos qué archivo cargar según el entorno
+if (process.env.NODE_ENV === 'development') {
+    dotenv.config({ path: '.env.development' });
+} else {
+    dotenv.config(); // En Railway o producción, usa las variables de entorno normales
+}
 
 /**
  * FUNCIÓN DE CONEXIÓN (ASÍNCRONA)

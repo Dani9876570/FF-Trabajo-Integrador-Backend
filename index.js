@@ -1,22 +1,20 @@
 // 1. IMPORTACIONES DE MÓDULOS ESENCIALES
 const express = require('express'); 
 const dotenv = require('dotenv'); 
-const swaggerUi = require('swagger-ui-express'); 
-const swaggerDocument = require('./swagger.config'); 
 const cors = require('cors');
 
+// 2. CONFIGURACIÓN DE VARIABLES DE ENTORNO (¡MOVER AQUÍ ARRIBA!)
+// Primero configuramos dotenv para que todo lo que venga después ya tenga las variables
+dotenv.config({ path: process.env.NODE_ENV === 'development' ? '.env.development' : '.env' });
 
-// IMPORTANTE: Traemos la conexión lógica que armamos en config/database.js
+// 3. AHORA SÍ, IMPORTAMOS LOS ARCHIVOS QUE USAN ESAS VARIABLES
 const connectDB = require('./config/database');
-
-// Importamos el enrutador central
+const swaggerUi = require('swagger-ui-express'); 
+const swaggerDocument = require('./swagger.config'); 
 const routes = require('./routes/index'); 
 
-// 2. CONFIGURACIÓN DE VARIABLES DE ENTORNO
-// Esto debe ir antes que cualquier otra lógica que use process.env
-dotenv.config();
 
-// 3. INICIALIZACIÓN DE LA APP
+// 4. INICIALIZACIÓN DE LA APP
 const app = express();
 
 /**
