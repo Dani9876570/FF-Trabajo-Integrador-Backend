@@ -7,7 +7,7 @@ const cors = require('cors');
 
 
 // IMPORTANTE: Traemos la conexión lógica que armamos en config/database.js
-const { dbConnection } = require('./config/database'); 
+const connectDB = require('./config/database');
 
 // Importamos el enrutador central
 const routes = require('./routes/index'); 
@@ -23,7 +23,7 @@ const app = express();
  * 4. CONEXIÓN A LA BASE DE DATOS
  * Usamos la función que ya tiene la lógica para Railway y Atlas.
  */
-dbConnection();
+connectDB();
 
 /**
  * 5. MIDDLEWARES
