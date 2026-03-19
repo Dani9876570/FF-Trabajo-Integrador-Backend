@@ -3,49 +3,37 @@ const express = require('express');
 const dotenv = require('dotenv'); 
 const cors = require('cors');
 
-// 2. CONFIGURACIÓN DE VARIABLES (Esto debe ir ANTES de connectDB)
+// 2. CONFIGURACIÓN DE VARIABLES (Prioridad: Archivo específico en Local, Variables de Sistema en Railway)
 if (process.env.NODE_ENV === 'development') {
     dotenv.config({ path: '.env.development' });
+} else if (process.env.NODE_ENV === 'production' && !process.env.RAILWAY_STATIC_URL) {
+    // Esto es solo para cuando corres 'npm start' en TU computadora
+    dotenv.config({ path: '.env.production' });
 } else {
-    dotenv.config(); // Para Railway
+    dotenv.config(); // Para Railway real
 }
 
-// 3. AHORA SÍ, IMPORTAMOS TU CONEXIÓN
+// 3. IMPORTACIÓN DE CONEXIÓN Y RUTAS
 const connectDB = require('./config/database');
 const swaggerUi = require('swagger-ui-express'); 
 const swaggerDocument = require('./swagger.config'); 
 const routes = require('./routes/index'); 
 
-
-// 4. INICIALIZACIÓN DE LA APP
+// 4. INICIALIZACIÓN
 const app = express();
-
-/**
- * 4. CONEXIÓN A LA BASE DE DATOS
- * Usamos la función que ya tiene la lógica para Railway y Atlas.
- */
 connectDB();
 
-/**
- * 5. MIDDLEWARES
- */
-app.use(express.json()); // Necesario para procesar el JSON de tus 30 productos
-app.use(cors()); // Permite solicitudes desde cualquier origen (útil para desarrollo y pruebas)
-/**
- * 6. DOCUMENTACIÓN (Swagger)
- * Tu API interactiva estará disponible en /api-docs
- */
+// 5. MIDDLEWARES
+app.use(express.json());
+app.use(cors());
+
+// 6. DOCUMENTACIÓN
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-/**
- * 7. REGISTRO DE RUTAS
- * Todas tus rutas de electrónicos empezarán con /api/productos
- */
+// 7. RUTAS
 app.use('/api', routes);
 
-/**
- * 8. MANEJO DE RUTAS NO ENCONTRADAS (404)
- */
+// 8. 404
 app.use((req, res) => {
     res.status(404).json({ 
         message: "Lo sentimos, la ruta que buscas no existe. Probá en /api-docs para ver las disponibles." 
@@ -54,15 +42,21 @@ app.use((req, res) => {
 
 /**
  * 9. PUESTA EN MARCHA DEL SERVIDOR
- * El puerto es dinámico para que Railway pueda asignarlo.
  */
 const PORT = process.env.PORT || 3000;
+const RAILWAY_LINK = 'https://ff-trabajo-integrador-backend-production.up.railway.app';
+
 app.listen(PORT, () => {
+    // Si estamos en production, mostramos el link de Railway. Si no, el de localhost.
+    const isProd = process.env.NODE_ENV === 'production';
+    const baseLink = isProd ? RAILWAY_LINK : `http://localhost:${PORT}`;
+
     console.log(`--------------------------------------------------`);
-    console.log(`🚀 Servidor activo en: http://localhost:${PORT}`);
-    console.log(`📖 Documentación: http://localhost:${PORT}/api-docs`);
+    console.log(`🚀 Servidor activo en: ${baseLink}`);
+    console.log(`📖 Documentación: ${baseLink}/api-docs`);
+    console.log(`📦 Ver Productos: ${baseLink}/api/productos`);
+    console.log(`🌍 Entorno actual: ${process.env.NODE_ENV}`);
     console.log(`--------------------------------------------------`);
 });
 
-// Exportamos para posibles tests automatizados
 module.exports = app;
