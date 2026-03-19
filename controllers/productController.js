@@ -1,6 +1,6 @@
 // 1. IMPORTACIÓN DEL MODELO
 // Requerimos el modelo Product para poder consultar la colección en la base de datos de Atlas.
-const Product = require('../../models/product'); // Todo en minúsculas para que sea más fácil de leer.
+const Product = require('../models/product'); // Nota: Solo lleva dos puntos (..), no cuatro.
 
 /**
  * CONTROLADOR PARA OBTENER TODOS LOS PRODUCTOS
