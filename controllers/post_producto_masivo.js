@@ -4,7 +4,8 @@ const Product = require('../models/product');
 
 // 2. IMPORTACIÓN DE LOS DATOS
 // Traemos el archivo JSON corregido con el array de 30 productos electrónicos.
-const productsData = require('../../data/electronicos.json'); 
+// ✅ Solo UN salto hacia atrás (../)
+const productsData = require('../data/electronicos.json');
 
 /**
  * CONTROLADOR PARA LA CARGA MASIVA (BULK CREATE)
