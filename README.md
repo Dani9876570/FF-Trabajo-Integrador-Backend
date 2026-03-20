@@ -28,10 +28,6 @@ El proyecto implementa una lógica de conexión inteligente que detecta el entor
 * **Desarrollo (`npm run dev`)**: Carga las variables desde `.env.development` para conectar a **MongoDB Atlas**.
 * **Producción (`npm start`)**: Configurado para la **Red Interna de Railway**, optimizando la latencia mediante comunicación por DNS interno (`.internal`).
 
-#### Validación de Conexión Exitosa:
-<div align="center">
-  <img src="assets/terminal.png" alt="Terminal showing successful connection to MongoDB" width="600">
-</div>
 
 
 ## 📥 Instalación y Uso Local
@@ -49,7 +45,13 @@ El proyecto implementa una lógica de conexión inteligente que detecta el entor
    ```
    *El servidor iniciará en: `http://localhost:3000`*
 
-3. **Poblar la Base de Datos**
+3. **Ejecutar en Produccion**
+   ```bash
+   npm start
+   ```
+   *El servidor iniciará en: `https://ff-trabajo-integrador-backend-production.up.railway.app/api/productos`*
+
+4. **Poblar la Base de Datos**
    Para inicializar el catálogo de 30 productos, utiliza el endpoint masivo:
    `POST /api/productos/masivo`
 
@@ -73,19 +75,32 @@ El proyecto implementa una lógica de conexión inteligente que detecta el entor
 
 ---
 
+---
+
 ## 🏗️ Estructura del Proyecto
 
 ```plaintext
 /
 ├── config/           # Conexión dinámica a DB (Atlas/Internal)
+│   └── database.js
 ├── controllers/      # Lógica de peticiones y respuestas
-├── data/             # Archivo JSON fuente (electronicos.json)
+│   ├── delete.js
+│   ├── get_Categoria_Nombre.js
+│   ├── get_Code.js
+│   ├── get_Precio_max_min.js
+│   ├── get_terminos.js
+│   ├── post.js
+│   ├── productControler.js
+│   └── put.js
+├── data/             # Archivo JSON fuente
+│   └── electronicos.json
 ├── models/           # Schemas de Mongoose
+│   └── product.js
 ├── routes/           # Definición de rutas Express
+│   ├── index.js
+│   └── productRoutes.js
 ├── index.js          # Punto de entrada y configuración de dotenv
 └── swagger.config.js # Configuración de OpenAPI
-```
-
 ---
 
 ## 👩‍💻 Autora
