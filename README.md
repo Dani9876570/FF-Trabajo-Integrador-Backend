@@ -101,7 +101,9 @@ El proyecto implementa una lógica de conexión inteligente que detecta el entor
 │   └── productRoutes.js
 ├── index.js          # Punto de entrada y configuración de dotenv
 └── swagger.config.js # Configuración de OpenAPI
+```
 ---
+
 
 ## 👩‍💻 Autora
 **Daniela Romero** - Web & App Developer  
